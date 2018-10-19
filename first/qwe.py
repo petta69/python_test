@@ -3,14 +3,17 @@
 import sys
 import os
 import numpy as np
+import argparse
 
 def main():
-    print("QWE2")
-    test(null,20)
+    parser = argparse.ArgumentParser(description='Testing testing.')
+    parser.add_argument('--test', type=str)
 
-def test(qwe='hej', id=10):
-    print "QWE: {} {}".format(qwe, id)
+    args = parser.parse_args()
 
+
+    print "Hello {}".format(args.test)
+    print "QWE: {}".format(np.__version__)
 
 if __name__ == "__main__":
     main()
