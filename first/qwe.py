@@ -20,8 +20,8 @@ def main():
     # set up orthographic map projection with
     # perspective of satellite looking down at 50N, 100W.
     # use low resolution coastlines.
-    map = Basemap(projection='ortho',lat_0=60,lon_0=15,resolution='l',
-    llcrnrx=-90,llcrnry=0,urcrnrx=90.,urcrnry=90)
+    map = Basemap(projection='cyl',llcrnrlon=-20,llcrnrlat=20, urcrnrlon=60, urcrnrlat=90,resolution='l')#,
+    #llcrnrx=-90,llcrnry=0,urcrnrx=90.,urcrnry=90)
     # draw coastlines, country boundaries, fill continents.
     map.drawcoastlines(linewidth=0.25)
     map.drawcountries(linewidth=0.25)
