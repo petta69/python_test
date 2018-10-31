@@ -11,7 +11,26 @@ import pytz
 import string
 import pycurl
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap, cm
+
+# https://matplotlib.org/basemap/users/examples.html
+
+def main():
+    parser = argparse.ArgumentParser(description='Read data from met.no and write IEEE.')
+    parser.add_argument('-d', '--debug', action='count', help='Set verbose level')
+    parser.add_argument('-v', '--version', action='count', help='Show version')
+
+    args = parser.parse_args()
+
+    ## Today
+    dt = datetime.utcnow()
+    url = ('https://thredds.met.no/thredds/dodsC/remotesensing/reflectivity-nordic/{0}/{1}/yrwms-nordic.mos.pcappi-0-dbz.noclass-clfilter-novpr-clcorr-block.laea-yrwms-1000.{0}{1}{2}.nc'
+        .format(dt.strftime("%Y"), dt.strftime("%m"), dt.strftime("%d"))
+    )
+    print "[INFO] URL: '{}'".format(url)
+    ## Fetch the data
+    data = readData(url)
+
 
 def readData(url):
     # create a dataset object
@@ -62,39 +81,37 @@ def readData(url):
         print "[INFO]: Timestep: '{0}' Min(Value): '{1}' Max(Value): '{2}'".format(filetime, np.min(data_array), np.max(data_array))
         #sys.exit(0)
 
-        return data_array
+        draw_map(data_array, filetime)
 
     dataset.close()
 
-def main():
-    parser = argparse.ArgumentParser(description='Read data from met.no and write IEEE.')
-    parser.add_argument('-d', '--debug', action='count', help='Set verbose level')
-    parser.add_argument('-v', '--version', action='count', help='Show version')
-
-    args = parser.parse_args()
-
-    ## Today
-    dt = datetime.utcnow()
-    url = ('https://thredds.met.no/thredds/dodsC/remotesensing/reflectivity-nordic/{0}/{1}/yrwms-nordic.mos.pcappi-0-dbz.noclass-clfilter-novpr-clcorr-block.laea-yrwms-1000.{0}{1}{2}.nc'
-        .format(dt.strftime("%Y"), dt.strftime("%m"), dt.strftime("%d"))
-    )
-    print "[INFO] URL: '{}'".format(url)
-    ## Fetch the data
-    data = readData(url)
-
-    map = Basemap(projection='cyl',llcrnrlon=0,llcrnrlat=50, urcrnrlon=30, urcrnrlat=75,resolution='l')#,
+def draw_map(data, time):
+    map = Basemap(projection='cyl',llcrnrlon=0,llcrnrlat=0, urcrnrlon=30, urcrnrlat=75,resolution='l')#,
     # draw coastlines, country boundaries, fill continents.
     map.drawcoastlines(linewidth=0.25)
     map.drawcountries(linewidth=0.25)
-    map.fillcontinents(color='coral',lake_color='blue')
+#    map.fillcontinents(color='coral',lake_color='blue')
     # draw the edge of the map projection region (the projection limb)
-    map.drawmapboundary(fill_color='aqua')
+#    map.drawmapboundary(fill_color='aqua')
     # draw lat/lon grid lines every 30 degrees.
     map.drawmeridians(np.arange(0,360,10))
     map.drawparallels(np.arange(-90,90,10))
-    cs = map.contour(data)
-    plt.title('contour lines over filled continent background')
+
+    ny = data.shape[0]; nx = data.shape[1]
+    lons, lats = map.makegrid(nx, ny) # get lat/lons of ny by nx evenly space grid.
+    x, y = map(lons, lats) # compute map proj coordinates.
+    # draw filled contours.
+    clevs = [0,1,2.5,5,7.5,10,15,20,30,40,50,70,100,150,200,250,300,400,500,600,750]
+    cs = map.contourf(x,y,data,clevs,cmap=cm.s3pcpn)
+    # add colorbar.
+    cbar = map.colorbar(cs,location='bottom',pad="5%")
+    cbar.set_label('mm')
+
+    plt.title('Radar at {}'.format(time))
     plt.show()
+
+
+
 
 
 
