@@ -86,7 +86,7 @@ def readData(url):
     dataset.close()
 
 def draw_map(data, time):
-    map = Basemap(projection='cyl',llcrnrlon=0,llcrnrlat=0, urcrnrlon=30, urcrnrlat=75,resolution='l')#,
+    map = Basemap(projection='cyl',llcrnrlon=0,llcrnrlat=50, urcrnrlon=30, urcrnrlat=75,resolution='l')#,
     # draw coastlines, country boundaries, fill continents.
     map.drawcoastlines(linewidth=0.25)
     map.drawcountries(linewidth=0.25)
