@@ -17,10 +17,12 @@ from mpl_toolkits.basemap import Basemap, cm
 
 def main():
     parser = argparse.ArgumentParser(description='Read data from met.no and write IEEE.')
-    parser.add_argument('-d', '--debug', action='count', help='Set verbose level')
-    parser.add_argument('-v', '--version', action='count', help='Show version')
+    parser.add_argument('--version', action='version', help='Show version')
+    parser.add_argument('-v', '--verbose', action='count', help='Set verbose')
 
+    global verbose
     args = parser.parse_args()
+    verbose = args.verbose
 
     ## Today
     dt = datetime.utcnow()
@@ -29,7 +31,7 @@ def main():
     )
     print "[INFO] URL: '{}'".format(url)
     ## Fetch the data
-    data = readData(url)
+    readData(url)
 
 
 def readData(url):
@@ -59,14 +61,15 @@ def readData(url):
     parameters = ["equivalent_reflectivity_factor"]
     for param in parameters:
         variable = dataset.variables[param]
-        # print param,"->shape: ",variable.shape
-        # print param,"->long_name: ",variable.long_name
-        # print param,"->units: ",variable.units
-        # print param,"->standard_name: ",variable.standard_name
+        if verbose >= 3:
+            print param,"->shape: ",variable.shape
+            print param,"->long_name: ",variable.long_name
+            print param,"->units: ",variable.units
+            print param,"->standard_name: ",variable.standard_name
 
-        # print
-        # print variable
-        # print
+            print
+            print variable
+            print
 
         time_slices = variable.shape[0]
         print ("Time slices: {}".format(time_slices))
