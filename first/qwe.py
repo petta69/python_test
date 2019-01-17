@@ -12,8 +12,8 @@ def main():
     args = parser.parse_args()
 
 
-    print "Hello {}".format(args.test)
-    print "QWE: {}".format(np.__version__)
+    print ("Hello {}".format(args.test))
+    print ("QWE: {}".format(np.__version__))
 
 if __name__ == "__main__":
     main()
