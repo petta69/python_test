@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python36
 
 import sys
 import os
