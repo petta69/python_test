@@ -13,7 +13,7 @@ def main():
 
 
     print "Hello {}".format(args.test)
-    print "QWE: {}".format(np.__version__)
+    print "Pietro: {}".format(np.__version__)
 
 if __name__ == "__main__":
     main()
